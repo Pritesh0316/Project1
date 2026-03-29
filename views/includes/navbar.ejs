@@ -21,6 +21,10 @@
     border-radius: 1rem;
   }
 
+  .navbar-collapse {
+  background-color: white;
+}
+
 </style>
 
 <nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
@@ -34,8 +38,8 @@
         <a class="nav-link" href="/listings">Explore</a>       
       </div>
       <div class="navbar-nav ">
-        <form class="d-flex d-flex mx-auto" role="search" >
-          <input class="form-control me-2 search" type="search" placeholder="Search City name" aria-label="Search"/>
+        <form action="/listings/search" method="GET" class="d-flex d-flex mx-auto" role="search" >
+          <input class="form-control me-2 search" type="search" placeholder="Search City name" aria-label="Search" name="location" value="<%= location || '' %>"/>
           <button class="btn btn-search" type="submit">Search <i class="fa-solid fa-magnifying-glass"></i></button>
         </form>
       </div>

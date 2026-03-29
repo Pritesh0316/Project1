@@ -3,7 +3,7 @@ const axios = require("axios");
 
 module.exports.index =  async (req, res) => {
     const allListings = await Listing.find({});
-    res.render("listings/index.ejs", {allListings});
+    res.render("listings/index.ejs", {allListings, category: null, location:null});
 };
 
 module.exports.filter =  async (req, res) => {
@@ -15,6 +15,33 @@ module.exports.filter =  async (req, res) => {
 
 module.exports.renderNewForm = (req, res) => {
     res.render("listings/new.ejs");
+};
+
+module.exports.search = async(req, res) => {
+    const { category, location } = req.query;
+
+    let filter = {};
+
+    // Category filter
+    if (category) {
+        filter.category = category;
+    }
+
+    // Location search (partial + case-insensitive)
+    if (location) {
+        filter.location = {
+        $regex: location,
+        $options: "i"
+        };
+    }
+
+    const allListings = await Listing.find(filter);
+
+    res.render("listings/index.ejs", {
+        allListings,
+        category,
+        location
+    });
 };
 
 module.exports.createListing = async(req, res) => {
