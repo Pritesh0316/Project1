@@ -45,6 +45,9 @@ module.exports.search = async(req, res) => {
 };
 
 module.exports.createListing = async(req, res) => {
+
+    console.log("BODY:", req.body);
+    console.log("FILE:", req.file);
     const location = req.body.listing.location;
     const response = await axios.get("https://api.opencagedata.com/geocode/v1/json", {
             params: {
