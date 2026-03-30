@@ -58,11 +58,19 @@ module.exports.createListing = async(req, res) => {
     }
     const{lat, lng} = response.data.results[0].geometry;
 
-    let url = req.file.path;
-    let filename = req.file.filename;
+    let image = {};
+    if (req.file) {
+        image = {
+            url: req.file.path,
+            filename: req.file.filename
+        };
+    } else {
+        req.flash("error", "Image upload failed");
+        return res.redirect("/listings/new");
+    }
     const newListing = new Listing(req.body.listing);
     newListing.owner = req.user._id;
-    newListing.image = {url, filename};
+    newListing.image = image;
     newListing.geometry = {
         type: "Point",
         coordinates: [lng, lat]
@@ -110,16 +118,22 @@ module.exports.updateListing =  async (req, res) => {
     const{lat, lng} = response.data.results[0].geometry;
 
     let{id} = req.params;
-    let listing = await Listing.findByIdAndUpdate(id, {...req.body.listing});
+    let listing = await Listing.findById(id);
+    if (!listing) {
+        req.flash("error", "Listing not found");
+        return res.redirect("/listings");
+    };
+    Object.assign(listing, req.body.listing);
     listing.geometry = {
         type: "Point",
         coordinates: [lng, lat]
     };
-    if(typeof req.file !== "undefined"){
-        let url = req.file.path;
-        let filename = req.file.filename;
-        listing.image = {url, filename};
-    };
+    if (req.file) {
+        listing.image = {
+            url: req.file.path,
+            filename: req.file.filename
+        };
+    }
     await listing.save();
     req.flash("success", "Listing Updated !");
     res.redirect(`/listings/${id}`);

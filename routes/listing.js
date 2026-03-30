@@ -13,24 +13,24 @@ const upload = multer({storage});
 // Filter Route
 router.get("/filter",wrapAsync(listingController.filter));
 
-// New Route
-router.get("/new",isLoggedIn ,listingController.renderNewForm);
-
 //Search Route
 router.get("/search", wrapAsync(listingController.search));
 
+// New Route
+router.get("/new",isLoggedIn ,listingController.renderNewForm);
+
 //Edit Route
 router.get("/:id/edit", isLoggedIn, isOwner, wrapAsync(listingController.editListing));
-
-// Router Route
-router.route("/")
-.get(wrapAsync(listingController.index))
-.post(isLoggedIn ,upload.single('listing[image]') ,validateListing, wrapAsync(listingController.createListing));
 
 router.route("/:id")
 .get(wrapAsync(listingController.showListing))
 .put(isLoggedIn, isOwner, upload.single('listing[image]'), validateListing, wrapAsync(listingController.updateListing))
 .delete(isLoggedIn, isOwner, wrapAsync(listingController.destroyListing));
+
+// Router Route
+router.route("/")
+.get(wrapAsync(listingController.index))
+.post(isLoggedIn ,upload.single('listing[image]') ,validateListing, wrapAsync(listingController.createListing));
 
 module.exports = router;
 
